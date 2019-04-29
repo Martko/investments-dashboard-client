@@ -12,6 +12,8 @@ import Loader from "./components/Loader";
 import ChartCard from "./components/ChartCard";
 const moment = require("moment");
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -132,7 +134,7 @@ class App extends Component {
   }
 
   async fetchPortfolioValueData() {
-    fetch("/api/portfolio-value")
+    fetch(`${API_URL}/api/portfolio-value`)
       .then(response => response.json())
       .then(data => {
         this.setState({
@@ -145,7 +147,7 @@ class App extends Component {
   }
 
   async fetchMonthlyInterestsData() {
-    fetch("/api/interests?type=monthly_interests&year=2019")
+    fetch(`${API_URL}/api/interests?type=monthly_interests&year=2019`)
       .then(response => response.json())
       .then(data => {
         this.setState({
@@ -159,7 +161,7 @@ class App extends Component {
   }
 
   async fetchPassiveIncomeData() {
-    fetch("/api/passive-income")
+    fetch(`${API_URL}/api/passive-income`)
       .then(response => response.json())
       .then(data => {
         this.setState({
