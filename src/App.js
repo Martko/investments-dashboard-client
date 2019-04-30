@@ -31,11 +31,13 @@ class App extends Component {
     this.state = {
       portfolioValues: [],
       dailyInterestData: [],
-      passiveIncome: []
+      passiveIncome: [],
+      historicalPortfolioValues: [],
+      availableCash: 0
     };
   }
 
-  test(data) {
+  groupByMonth(data, valueField) {
     let res = {};
     data.map(entry => {
       if (!res.hasOwnProperty(entry.month)) {
@@ -44,7 +46,7 @@ class App extends Component {
           "MMMM"
         );
       }
-      res[entry.month][entry.source] = entry.total;
+      res[entry.month][entry.source] = entry[valueField];
     });
 
     return Object.values(res);
@@ -130,44 +132,41 @@ class App extends Component {
       return <Loader />;
     }
 
-    return <SimpleLineChart data={this.state.dailyInterestData} />;
+    return (
+      <SimpleLineChart
+        dataKey="month"
+        lineKeys={["mintos", "omaraha"]}
+        data={this.state.dailyInterestData}
+      />
+    );
   }
 
-  async fetchPortfolioValueData() {
-    fetch(`${API_URL}/api/portfolio-value`)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          portfolioValues: data
-        });
-      })
-      .catch(err => {
-        throw new Error(err);
-      });
+  displayHistoricalPortfolioValues() {
+    if (!this.state.historicalPortfolioValues.length) {
+      return <Loader />;
+    }
+
+    return (
+      <SimpleLineChart
+        dataKey="month"
+        lineKeys={["mintos", "bondora", "funderbeam", "omaraha", "fundwise"]}
+        data={this.state.historicalPortfolioValues}
+      />
+    );
   }
 
-  async fetchMonthlyInterestsData() {
-    fetch(`${API_URL}/api/interests?type=monthly_interests&year=2019`)
+  async fetch(url, stateProperty, transformerFunction) {
+    fetch(API_URL + url)
       .then(response => response.json())
       .then(data => {
-        this.setState({
-          ...this.state,
-          dailyInterestData: this.test(data)
-        });
-      })
-      .catch(err => {
-        throw new Error(err);
-      });
-  }
+        const state = {
+          ...this.state
+        };
+        data =
+          transformerFunction !== undefined ? transformerFunction(data) : data;
 
-  async fetchPassiveIncomeData() {
-    fetch(`${API_URL}/api/passive-income`)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({
-          ...this.state,
-          passiveIncome: data
-        });
+        state[stateProperty] = data;
+        this.setState(state);
       })
       .catch(err => {
         throw new Error(err);
@@ -175,9 +174,25 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.fetchPortfolioValueData();
-    this.fetchPassiveIncomeData();
-    this.fetchMonthlyInterestsData();
+    this.fetch("/api/portfolio-value", "portfolioValues");
+    this.fetch("/api/passive-income", "passiveIncome");
+    this.fetch(
+      "/api/interests?type=monthly_interests&year=2019",
+      "dailyInterestData",
+      data => {
+        return this.groupByMonth(data, "total");
+      }
+    );
+    this.fetch(
+      "/api/portfolio-value?type=by_month",
+      "historicalPortfolioValues",
+      data => {
+        return this.groupByMonth(data, "value");
+      }
+    );
+    this.fetch("/api/cash", "availableCash", data => {
+      return _.sumBy(data, "cash");
+    });
   }
 
   render() {
@@ -200,7 +215,14 @@ class App extends Component {
             {this.displayTotalMonthlyLossScorecard()}
           </Grid>
           <Grid item md={2}>
-            test
+            {!this.state.availableCash ? (
+              <Loader />
+            ) : (
+              <ScoreCard
+                title={"Available Cash"}
+                value={formatCurrency(this.state.availableCash)}
+              />
+            )}
           </Grid>
           <Grid item md={4}>
             <ChartCard
@@ -217,7 +239,7 @@ class App extends Component {
           <Grid item md={12}>
             <ChartCard
               title="Portfolio value change (2019)"
-              content={this.displayMonthlyInterests()}
+              content={this.displayHistoricalPortfolioValues()}
             />
           </Grid>
         </Grid>

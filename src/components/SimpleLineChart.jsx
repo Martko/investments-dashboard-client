@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { getSourceColor } from "../utils";
 
-export default class Example extends PureComponent {
+export default class SimpleLineChart extends PureComponent {
   render() {
     return (
       <LineChart
@@ -24,28 +24,25 @@ export default class Example extends PureComponent {
           bottom: 15
         }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
+        <CartesianGrid
+          strokeDasharray="2 2"
+          verticalFill={["#f3f3f3"]}
+          fillOpacity={0.3}
+        />
+        <XAxis dataKey={this.props.dataKey} />
         <YAxis />
         <Tooltip />
         <Legend />
-        {/* {this.props.data.map((entry, index) => (
-          <Line
-            type="monotone"
-            dataKey={entry.name}
-            stroke={getSourceColor(entry.name)}
-          />
-        ))} */}
-        <Line
-          type="monotone"
-          dataKey="mintos"
-          stroke={getSourceColor("mintos")}
-        />
-        <Line
-          type="monotone"
-          dataKey="omaraha"
-          stroke={getSourceColor("omaraha")}
-        />
+        {this.props.lineKeys.map((entry, index) => {
+          return (
+            <Line
+              key={index}
+              type="monotone"
+              dataKey={entry}
+              stroke={getSourceColor(entry)}
+            />
+          );
+        })}
       </LineChart>
     );
   }
