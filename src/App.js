@@ -40,13 +40,13 @@ class App extends Component {
   groupByMonth(data, valueField) {
     let res = {};
     data.map(entry => {
-      if (!res.hasOwnProperty(entry.month)) {
-        res[entry.month] = {};
-        res[entry.month].month = moment(new Date(2012, entry.month, 4)).format(
-          "MMMM"
-        );
+      const key = entry.month - 1;
+
+      if (!res.hasOwnProperty(key)) {
+        res[key] = {};
+        res[key].month = moment(new Date(2012, key, 4)).format("MMMM");
       }
-      res[entry.month][entry.source] = entry[valueField];
+      res[key][entry.source] = entry[valueField];
     });
 
     return Object.values(res);
@@ -180,7 +180,7 @@ class App extends Component {
       "/api/interests?type=monthly_interests&year=2019",
       "dailyInterestData",
       data => {
-        return this.groupByMonth(data, "total");
+        return this.groupByMonth(data, "net");
       }
     );
     this.fetch(
@@ -199,22 +199,22 @@ class App extends Component {
     return (
       <div className="App">
         <Grid container spacing={24}>
-          <Grid item md={2}>
+          <Grid item sm={4} md={2} xs={6}>
             {this.displayPortfolioValueScorecard()}
           </Grid>
-          <Grid item md={2}>
+          <Grid item sm={4} md={2} xs={6}>
             {this.displayMonthlyPassiveIncomeScorecard()}
           </Grid>
-          <Grid item md={2}>
+          <Grid item sm={4} md={2} xs={6}>
             {this.displayMonthlyRentalIncomeScorecard()}
           </Grid>
-          <Grid item md={2}>
+          <Grid item sm={4} md={2} xs={6}>
             {this.displayTotalMonthlyPassiveIncomeScorecard()}
           </Grid>
-          <Grid item md={2}>
+          <Grid item sm={4} md={2} xs={6}>
             {this.displayTotalMonthlyLossScorecard()}
           </Grid>
-          <Grid item md={2}>
+          <Grid item sm={4} md={2} xs={6}>
             {!this.state.availableCash ? (
               <Loader />
             ) : (
@@ -224,19 +224,19 @@ class App extends Component {
               />
             )}
           </Grid>
-          <Grid item md={4}>
+          <Grid item md={4} xs={12}>
             <ChartCard
               title={"Portfolio breakdown"}
               content={this.displayPortfolioBreakdown()}
             />
           </Grid>
-          <Grid item md={8}>
+          <Grid item md={8} xs={12}>
             <ChartCard
               title="Monthly Interests (2019)"
               content={this.displayMonthlyInterests()}
             />
           </Grid>
-          <Grid item md={12}>
+          <Grid item md={12} xs={12}>
             <ChartCard
               title="Portfolio value change (2019)"
               content={this.displayHistoricalPortfolioValues()}
