@@ -198,7 +198,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Grid container spacing={24}>
+        <Grid container spacing={16}>
           <Grid item sm={4} md={2} xs={6}>
             {this.displayPortfolioValueScorecard()}
           </Grid>
