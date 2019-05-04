@@ -1,25 +1,26 @@
 import React, { PureComponent } from "react";
 import {
-  LineChart,
+  ComposedChart,
   Line,
   ResponsiveContainer,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Bar,
   Legend
 } from "recharts";
 import { getSourceColor } from "../utils";
 
-export default class SimpleLineChart extends PureComponent {
+export default class CombinedChart extends PureComponent {
   render() {
     return (
       <ResponsiveContainer width="100%" aspect={4.0 / 1.34}>
-        <LineChart
+        <ComposedChart
           data={this.props.data}
           margin={{
-            top: 15,
-            right: 15,
+            top: 0,
+            right: 0,
             left: 0,
             bottom: 0
           }}
@@ -33,6 +34,14 @@ export default class SimpleLineChart extends PureComponent {
           <YAxis />
           <Tooltip />
           <Legend />
+          {this.props.barDataKey !== undefined ? (
+            <Bar
+              dataKey="total"
+              barSize={30}
+              fill="#cccccc"
+              fillOpacity={0.2}
+            />
+          ) : null}
           {this.props.lineKeys.map((entry, index) => {
             return (
               <Line
@@ -43,7 +52,7 @@ export default class SimpleLineChart extends PureComponent {
               />
             );
           })}
-        </LineChart>
+        </ComposedChart>
       </ResponsiveContainer>
     );
   }

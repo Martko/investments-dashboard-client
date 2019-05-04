@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import PortfolioValuesPieChart from "./components/PieChart";
-import SimpleLineChart from "./components/SimpleLineChart";
+import CombinedChart from "./components/CombinedChart";
 import "./App.css";
 import * as _ from "lodash";
-import { ResponsiveContainer } from "recharts";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import ScoreCard from "./components/ScoreCard";
@@ -33,7 +32,8 @@ class App extends Component {
       dailyInterestData: [],
       passiveIncome: [],
       historicalPortfolioValues: [],
-      availableCash: 0
+      availableCash: 0,
+      rentalIncome: 0
     };
   }
 
@@ -44,9 +44,11 @@ class App extends Component {
 
       if (!res.hasOwnProperty(key)) {
         res[key] = {};
+        res[key].total = 0;
         res[key].month = moment(new Date(2012, key, 4)).format("MMMM");
       }
       res[key][entry.source] = entry[valueField];
+      res[key].total += entry[valueField];
     });
 
     return Object.values(res);
@@ -79,16 +81,20 @@ class App extends Component {
   }
 
   displayMonthlyRentalIncomeScorecard() {
+    if (!this.state.rentalIncome) {
+      return <Loader />;
+    }
+
     return (
       <ScoreCard
         title={"Monthly rental income"}
-        value={formatCurrency(398.85)}
+        value={formatCurrency(this.state.rentalIncome)}
       />
     );
   }
 
   displayTotalMonthlyPassiveIncomeScorecard() {
-    if (!this.state.passiveIncome) {
+    if (!this.state.passiveIncome || !this.state.rentalIncome) {
       return <Loader />;
     }
 
@@ -96,7 +102,7 @@ class App extends Component {
       <ScoreCard
         title={"Total monthly passive income"}
         value={formatCurrency(
-          398.85 + _.sumBy(this.state.passiveIncome, "net")
+          this.state.rentalIncome + _.sumBy(this.state.passiveIncome, "net")
         )}
       />
     );
@@ -120,11 +126,7 @@ class App extends Component {
       return <Loader />;
     }
 
-    return (
-      <ResponsiveContainer>
-        <PortfolioValuesPieChart data={this.state.portfolioValues} />
-      </ResponsiveContainer>
-    );
+    return <PortfolioValuesPieChart data={this.state.portfolioValues} />;
   }
 
   displayMonthlyInterests() {
@@ -133,8 +135,9 @@ class App extends Component {
     }
 
     return (
-      <SimpleLineChart
+      <CombinedChart
         dataKey="month"
+        barDataKey="total"
         lineKeys={["mintos", "omaraha"]}
         data={this.state.dailyInterestData}
       />
@@ -147,8 +150,9 @@ class App extends Component {
     }
 
     return (
-      <SimpleLineChart
+      <CombinedChart
         dataKey="month"
+        barDataKey="total"
         lineKeys={["mintos", "bondora", "funderbeam", "omaraha", "fundwise"]}
         data={this.state.historicalPortfolioValues}
       />
@@ -175,6 +179,9 @@ class App extends Component {
 
   componentDidMount() {
     this.fetch("/api/portfolio-value", "portfolioValues");
+    this.fetch("/api/rent?limit=3", "rentalIncome", data => {
+      return _.sumBy(data, "net") / 3;
+    });
     this.fetch("/api/passive-income", "passiveIncome");
     this.fetch(
       "/api/interests?type=monthly_interests&year=2019",
