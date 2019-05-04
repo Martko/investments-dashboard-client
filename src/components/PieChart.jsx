@@ -1,5 +1,12 @@
 import React, { PureComponent } from "react";
-import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
 import { getSourceColor } from "../utils";
 
 const RADIAN = Math.PI / 180;
@@ -32,27 +39,28 @@ const renderCustomizedLabel = ({
 export default class PortfolioValuesPieChart extends PureComponent {
   render() {
     return (
-      <PieChart width={480} height={300}>
-        <Pie
-          data={this.props.data}
-          labelLine={false}
-          label={renderCustomizedLabel}
-          outerRadius={140}
-          fill="#8884d8"
-          dataKey="value"
-        >
-          {this.props.data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={getSourceColor(entry.name)} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend
-          layout="vertical"
-          align="right"
-          verticalAlign="middle"
-          iconType="circle"
-        />
-      </PieChart>
+      <ResponsiveContainer width="100%" aspect={4.0 / 3}>
+        <PieChart>
+          <Pie
+            data={this.props.data}
+            labelLine={false}
+            label={renderCustomizedLabel}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {this.props.data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={getSourceColor(entry.name)} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend
+            layout="vertical"
+            align="right"
+            verticalAlign="middle"
+            iconType="circle"
+          />
+        </PieChart>
+      </ResponsiveContainer>
     );
   }
 }
