@@ -10,16 +10,10 @@ import {
 import { getSourceColor, formatCurrency } from "../utils";
 
 const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
-  index
-}) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+const renderCustomizedLabel = props => {
+  const { cx, cy, midAngle, innerRadius, outerRadius, percent, name } = props;
+
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.24;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -27,27 +21,13 @@ const renderCustomizedLabel = ({
     <text
       x={x}
       y={y}
-      fill="white"
+      fill={getSourceColor(name)}
       textAnchor={x > cx ? "start" : "end"}
       dominantBaseline="central"
     >
-      {`${(percent * 100).toFixed(0)}%`}
+      {`${(percent * 100).toFixed(2)}%`}
     </text>
   );
-};
-
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active) {
-    return (
-      <div className="custom-tooltip">
-        <p className="label">{`${label} : ${formatCurrency(
-          payload[0].value
-        )}`}</p>
-      </div>
-    );
-  }
-
-  return null;
 };
 
 export default class InvestmentsPieChart extends PureComponent {
@@ -57,7 +37,6 @@ export default class InvestmentsPieChart extends PureComponent {
         <PieChart>
           <Pie
             data={this.props.data}
-            labelLine={false}
             label={renderCustomizedLabel}
             fill="#8884d8"
             dataKey="value"
