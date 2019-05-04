@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-import { getSourceColor } from "../utils";
+import { getSourceColor, formatCurrency } from "../utils";
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
@@ -36,7 +36,21 @@ const renderCustomizedLabel = ({
   );
 };
 
-export default class PortfolioValuesPieChart extends PureComponent {
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active) {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">{`${label} : ${formatCurrency(
+          payload[0].value
+        )}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export default class InvestmentsPieChart extends PureComponent {
   render() {
     return (
       <ResponsiveContainer width="100%" aspect={4.0 / 3}>
@@ -52,13 +66,15 @@ export default class PortfolioValuesPieChart extends PureComponent {
               <Cell key={`cell-${index}`} fill={getSourceColor(entry.name)} />
             ))}
           </Pie>
-          <Tooltip />
-          <Legend
-            layout="vertical"
-            align="right"
-            verticalAlign="middle"
-            iconType="circle"
-          />
+          <Tooltip formatter={value => formatCurrency(value)} />
+          {this.props.showLegend ? (
+            <Legend
+              layout="vertical"
+              align="right"
+              verticalAlign="middle"
+              iconType="circle"
+            />
+          ) : null}
         </PieChart>
       </ResponsiveContainer>
     );

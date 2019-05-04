@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import PortfolioValuesPieChart from "./components/PieChart";
+import PieChart from "./components/PieChart";
 import CombinedChart from "./components/CombinedChart";
 import "./App.css";
 import * as _ from "lodash";
@@ -32,6 +32,7 @@ class App extends Component {
       dailyInterestData: [],
       passiveIncome: [],
       historicalPortfolioValues: [],
+      passiveIncomeBreakdown: [],
       availableCash: 0,
       rentalIncome: 0
     };
@@ -121,12 +122,31 @@ class App extends Component {
     );
   }
 
-  displayPortfolioBreakdown() {
-    if (!this.state.portfolioValues.length) {
+  displayPassiveIncomeBreakdown() {
+    if (!this.state.passiveIncome.length || !this.state.rentalIncome) {
       return <Loader />;
     }
 
-    return <PortfolioValuesPieChart data={this.state.portfolioValues} />;
+    const data = [
+      {
+        name: "interests",
+        value: _.sumBy(this.state.passiveIncome, "net")
+      },
+      {
+        name: "rent",
+        value: this.state.rentalIncome
+      }
+    ];
+
+    return <PieChart data={data} />;
+  }
+
+  displayPieChart(dataKey, showLegend) {
+    if (!this.state[dataKey].length) {
+      return <Loader />;
+    }
+
+    return <PieChart showLegend={showLegend} data={this.state[dataKey]} />;
   }
 
   displayMonthlyInterests() {
@@ -231,19 +251,25 @@ class App extends Component {
               />
             )}
           </Grid>
-          <Grid item md={4} xs={12}>
+          <Grid item md={3} sm={6} xs={12}>
             <ChartCard
               title={"Portfolio breakdown"}
-              content={this.displayPortfolioBreakdown()}
+              content={this.displayPieChart("portfolioValues")}
             />
           </Grid>
-          <Grid item md={8} xs={12}>
+          <Grid item md={3} sm={6} xs={12}>
+            <ChartCard
+              title={"Passive income breakdown"}
+              content={this.displayPassiveIncomeBreakdown()}
+            />
+          </Grid>
+          <Grid item md={6} xs={12}>
             <ChartCard
               title="Monthly Interests (2019)"
               content={this.displayMonthlyInterests()}
             />
           </Grid>
-          <Grid item md={12} xs={12}>
+          <Grid item md={6} xs={12}>
             <ChartCard
               title="Portfolio value change (2019)"
               content={this.displayHistoricalPortfolioValues()}

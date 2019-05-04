@@ -15,6 +15,8 @@ export function getSourceColor(source) {
     mintos: "#78c8c7",
     bondora: "#5fade2",
     funderbeam: "#d63d79",
-    fundwise: "#f16b4f"
+    fundwise: "#f16b4f",
+    rent: "#5286ec",
+    interests: "#cb4f40"
   }[source];
 }

@@ -10,14 +10,16 @@ import {
   Bar,
   Legend
 } from "recharts";
-import { getSourceColor } from "../utils";
+import { getSourceColor, formatCurrency } from "../utils";
 
 export default class CombinedChart extends PureComponent {
   render() {
     return (
-      <ResponsiveContainer width="100%" aspect={4.0 / 1.34}>
+      <ResponsiveContainer width="100%" minHeight={200}>
         <ComposedChart
           data={this.props.data}
+          width={500}
+          height={400}
           margin={{
             top: 0,
             right: 0,
@@ -32,7 +34,7 @@ export default class CombinedChart extends PureComponent {
           />
           <XAxis dataKey={this.props.dataKey} />
           <YAxis />
-          <Tooltip />
+          <Tooltip formatter={value => formatCurrency(value)} />
           <Legend />
           {this.props.barDataKey !== undefined ? (
             <Bar
