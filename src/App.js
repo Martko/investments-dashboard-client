@@ -179,6 +179,21 @@ class App extends Component {
     );
   }
 
+  displayLoanAndPortfolioValues() {
+    if (!this.state.historicalPortfolioValues.length) {
+      return <Loader />;
+    }
+
+    return (
+      <CombinedChart
+        dataKey="month"
+        barDataKey="total"
+        lineKeys={["total"]}
+        data={this.state.historicalPortfolioValues}
+      />
+    );
+  }
+
   async fetch(url, stateProperty, transformerFunction) {
     fetch(API_URL + url)
       .then(response => response.json())
@@ -219,6 +234,9 @@ class App extends Component {
     );
     this.fetch("/api/cash", "availableCash", data => {
       return _.sumBy(data, "cash");
+    });
+    this.fetch("/api/loans", "loans", data => {
+      return this.groupByMonth(data, "sum");
     });
   }
 
@@ -273,6 +291,12 @@ class App extends Component {
             <ChartCard
               title="Portfolio value change (2019)"
               content={this.displayHistoricalPortfolioValues()}
+            />
+          </Grid>
+          <Grid item md={6} xs={12}>
+            <ChartCard
+              title="Total portfolio value vs. loan"
+              content={this.displayLoanAndPortfolioValues()}
             />
           </Grid>
         </Grid>
