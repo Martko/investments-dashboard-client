@@ -9,7 +9,7 @@ echo "Committer: $CI_COMMITTER_NAME ($CI_COMMITTER_EMAIL)"
 echo "========================================================="
 
 echo "======== ZIPPING DEPLOYMENT $CI_BUILD_NUMBER ========"
-tar -zcf ~/$RELEASE_FILE_NAME ./
+tar -zcf ~/$RELEASE_FILE_NAME ./build
 echo "DEPLOYMENT ZIPPING COMPLETE"
 
 echo "======== STARTING TO TRANSFER DEPLOYMENT PACKAGE TO LIVE ======== "
