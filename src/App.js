@@ -150,7 +150,7 @@ class App extends Component {
     return <PieChart showLegend={showLegend} data={this.state[dataKey]} />;
   }
 
-  displayInterests(type, dataKey, lineKeys) {
+  displayInterests(type, dataKey, lineKeys, showNavigator) {
     if (!this.state[type].length) {
       return <Loader />;
     }
@@ -160,6 +160,7 @@ class App extends Component {
         dataKey={dataKey}
         barDataKey="total"
         lineKeys={lineKeys}
+        showNavigator={showNavigator || false}
         data={this.state[type]}
       />
     );
@@ -289,10 +290,12 @@ class App extends Component {
           <Grid item md={8} xs={12}>
             <ChartCard
               title="Daily interests"
-              content={this.displayInterests("dailyInterestData", "day", [
-                "loss",
-                "net"
-              ])}
+              content={this.displayInterests(
+                "dailyInterestData",
+                "day",
+                ["loss", "net"],
+                true
+              )}
             />
           </Grid>
           <Grid item md={6} xs={12}>

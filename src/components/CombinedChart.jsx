@@ -8,7 +8,8 @@ import {
   CartesianGrid,
   Tooltip,
   Bar,
-  Legend
+  Legend,
+  Brush
 } from "recharts";
 import { getSourceColor, formatCurrency } from "../utils";
 
@@ -36,6 +37,9 @@ export default class CombinedChart extends PureComponent {
           <YAxis />
           <Tooltip formatter={value => formatCurrency(value)} />
           <Legend />
+          {this.props.showNavigator ? (
+            <Brush dataKey="name" height={25} stroke="#999" />
+          ) : null}
           {this.props.barDataKey !== undefined ? (
             <Bar
               dataKey="total"
