@@ -30,6 +30,7 @@ class App extends Component {
     this.state = {
       portfolioValues: [],
       dailyInterestData: [],
+      monthlyInterestData: [],
       passiveIncome: [],
       historicalPortfolioValues: [],
       passiveIncomeBreakdown: [],
@@ -149,17 +150,17 @@ class App extends Component {
     return <PieChart showLegend={showLegend} data={this.state[dataKey]} />;
   }
 
-  displayMonthlyInterests() {
-    if (!this.state.dailyInterestData.length) {
+  displayInterests(type, dataKey, lineKeys) {
+    if (!this.state[type].length) {
       return <Loader />;
     }
 
     return (
       <CombinedChart
-        dataKey="month"
+        dataKey={dataKey}
         barDataKey="total"
-        lineKeys={["mintos", "omaraha"]}
-        data={this.state.dailyInterestData}
+        lineKeys={lineKeys}
+        data={this.state[type]}
       />
     );
   }
@@ -220,10 +221,14 @@ class App extends Component {
     this.fetch("/api/passive-income", "passiveIncome");
     this.fetch(
       "/api/interests?type=monthly_interests&year=2019",
-      "dailyInterestData",
+      "monthlyInterestData",
       data => {
         return this.groupByMonth(data, "net");
       }
+    );
+    this.fetch(
+      "/api/interests?type=daily_interests&year=2019",
+      "dailyInterestData"
     );
     this.fetch(
       "/api/portfolio-value?type=by_month",
@@ -284,7 +289,10 @@ class App extends Component {
           <Grid item md={6} xs={12}>
             <ChartCard
               title="Monthly Interests (2019)"
-              content={this.displayMonthlyInterests()}
+              content={this.displayInterests("monthlyInterestData", "month", [
+                "mintos",
+                "omaraha"
+              ])}
             />
           </Grid>
           <Grid item md={6} xs={12}>
@@ -297,6 +305,15 @@ class App extends Component {
             <ChartCard
               title="Total portfolio value vs. loan"
               content={this.displayLoanAndPortfolioValues()}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <ChartCard
+              title="Daily interests"
+              content={this.displayInterests("dailyInterestData", "day", [
+                "loss",
+                "net"
+              ])}
             />
           </Grid>
         </Grid>

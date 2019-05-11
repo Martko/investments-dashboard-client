@@ -17,6 +17,8 @@ export function getSourceColor(source) {
     funderbeam: "#d63d79",
     fundwise: "#f16b4f",
     rent: "#5286ec",
-    interests: "#cb4f40"
+    interests: "#cb4f40",
+    loss: "#ED441A",
+    net: "#20BD0F"
   }[source];
 }
