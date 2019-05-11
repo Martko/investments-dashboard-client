@@ -23,3 +23,7 @@ mkdir ~/deployments/$DEPLOYMENT_NAME &&
 tar xzf $RELEASE_FILE_NAME -C ~/deployments/$DEPLOYMENT_NAME &&
 rm $RELEASE_FILE_NAME &&
 exit"
+
+echo "========================================="
+echo "========= DEPLOYMENT SUCCESSFUL ========="
+echo "========================================="
