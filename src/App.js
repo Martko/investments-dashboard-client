@@ -277,7 +277,7 @@ class App extends Component {
           </Grid>
           <Grid item md={3} sm={6} xs={12}>
             <ChartCard
-              title={"Passive income breakdown"}
+              title={"Passive Income Breakdown"}
               content={this.displayPassiveIncomeBreakdown()}
             />
           </Grid>
