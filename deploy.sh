@@ -13,6 +13,13 @@ tar -zcf ~/$RELEASE_FILE_NAME ./
 echo "DEPLOYMENT ZIPPING COMPLETE"
 
 echo "======== STARTING TO TRANSFER DEPLOYMENT PACKAGE TO LIVE ======== "
-scp -i ~/.ssh/id_rsa.deploy -C ~/$RELEASE_FILE_NAME $LIVE_SERVER_USER@$LIVE_SERVER_HOST:$LIVE_SERVER_APP_PATH
+scp -i /home/rof/.ssh/id_rsa -C ~/$RELEASE_FILE_NAME $LIVE_SERVER_USER@$LIVE_SERVER_HOST:$LIVE_SERVER_APP_PATH
 echo "======== DEPLOYMENT PACKAGE TRANSFER TO LIVE COMPLETE ========"
 
+echo "======== INSTALLING DEPLOYMENT IN LIVE ========"
+DEPLOYMENT_NAME="${CI_BUILD_NUMBER}_`date +\%d-\%m-\%Y_\%H-\%M-\%S`"
+ssh -i /home/rof/.ssh/id_rsa $LIVE_SERVER_USER@$LIVE_SERVER_HOST "
+mkdir ~/deployments/$DEPLOYMENT_NAME &&
+tar xzf $RELEASE_FILE_NAME -C ~/deployments/$DEPLOYMENT_NAME &&
+rm $RELEASE_FILE_NAME &&
+exit"
