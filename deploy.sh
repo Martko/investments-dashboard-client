@@ -21,6 +21,7 @@ DEPLOYMENT_NAME="${CI_BUILD_NUMBER}_`date +\%d-\%m-\%Y_\%H-\%M-\%S`"
 ssh -i /home/rof/.ssh/id_rsa $LIVE_SERVER_USER@$LIVE_SERVER_HOST "
 mkdir ~/deployments/$DEPLOYMENT_NAME &&
 tar xzf $RELEASE_FILE_NAME -C ~/deployments/$DEPLOYMENT_NAME &&
+ln -sfn ~/deployments/$DEPLOYMENT_NAME ~/latest/dashboard-client &&
 rm $RELEASE_FILE_NAME &&
 exit"
 
