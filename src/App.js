@@ -227,7 +227,7 @@ class App extends Component {
       }
     );
     this.fetch(
-      "/api/interests?type=daily_interests&year=2019",
+      "/api/interests?type=daily_interests&start=2019-05-01",
       "dailyInterestData"
     );
     this.fetch(
