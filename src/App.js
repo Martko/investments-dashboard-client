@@ -274,16 +274,25 @@ class App extends Component {
               />
             )}
           </Grid>
-          <Grid item md={3} sm={6} xs={12}>
+          <Grid item md={2} sm={6} xs={12}>
             <ChartCard
               title={"Portfolio breakdown"}
               content={this.displayPieChart("portfolioValues")}
             />
           </Grid>
-          <Grid item md={3} sm={6} xs={12}>
+          <Grid item md={2} sm={6} xs={12}>
             <ChartCard
               title={"Passive income breakdown"}
               content={this.displayPassiveIncomeBreakdown()}
+            />
+          </Grid>
+          <Grid item md={8} xs={12}>
+            <ChartCard
+              title="Daily interests"
+              content={this.displayInterests("dailyInterestData", "day", [
+                "loss",
+                "net"
+              ])}
             />
           </Grid>
           <Grid item md={6} xs={12}>
@@ -305,15 +314,6 @@ class App extends Component {
             <ChartCard
               title="Total portfolio value vs. loan"
               content={this.displayLoanAndPortfolioValues()}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <ChartCard
-              title="Daily interests"
-              content={this.displayInterests("dailyInterestData", "day", [
-                "loss",
-                "net"
-              ])}
             />
           </Grid>
         </Grid>
