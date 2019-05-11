@@ -40,7 +40,7 @@ class App extends Component {
 
   groupByMonth(data, valueField) {
     let res = {};
-    data.map(entry => {
+    data.forEach(entry => {
       const key = entry.month - 1;
 
       if (!res.hasOwnProperty(key)) {
