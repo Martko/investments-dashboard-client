@@ -39,10 +39,10 @@ class App extends Component {
     };
   }
 
-  groupByMonth(data, valueField) {
+  groupBy(data, groupByField, valueField) {
     let res = {};
     data.forEach(entry => {
-      const key = entry.month - 1;
+      const key = entry[groupByField] - 1;
 
       if (!res.hasOwnProperty(key)) {
         res[key] = {};
@@ -224,7 +224,7 @@ class App extends Component {
       "/api/interests?type=monthly_interests&year=2019",
       "monthlyInterestData",
       data => {
-        return this.groupByMonth(data, "net");
+        return this.groupBy(data, "month", "net");
       }
     );
     this.fetch(
@@ -235,14 +235,14 @@ class App extends Component {
       "/api/portfolio-value?type=by_month",
       "historicalPortfolioValues",
       data => {
-        return this.groupByMonth(data, "value");
+        return this.groupBy(data, "month", "value");
       }
     );
     this.fetch("/api/cash", "availableCash", data => {
       return _.sumBy(data, "cash");
     });
     this.fetch("/api/loans", "loans", data => {
-      return this.groupByMonth(data, "sum");
+      return this.groupBy(data, "month", "sum");
     });
   }
 
