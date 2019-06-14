@@ -228,7 +228,7 @@ class App extends Component {
       }
     );
     this.fetch(
-      "/api/interests?type=daily_interests&start=2019-05-01",
+      `/api/interests?type=daily_interests&start=${moment().format('YYYY-MM-DD')}`,
       "dailyInterestData"
     );
     this.fetch(
