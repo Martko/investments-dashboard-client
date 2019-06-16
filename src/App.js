@@ -175,7 +175,7 @@ class App extends Component {
       <CombinedChart
         dataKey="month"
         barDataKey="total"
-        lineKeys={["mintos", "bondora", "funderbeam", "omaraha", "fundwise"]}
+        lineKeys={["mintos", "bondora", "funderbeam", "omaraha", "fundwise", "estate"]}
         data={this.state.historicalPortfolioValues}
       />
     );
