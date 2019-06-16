@@ -19,6 +19,7 @@ export function getSourceColor(source) {
     rent: "#5286ec",
     interests: "#cb4f40",
     loss: "#ED441A",
-    net: "#20BD0F"
+    net: "#20BD0F",
+    estate: "#5286ec",
   }[source];
 }
