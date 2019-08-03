@@ -21,5 +21,7 @@ export function getSourceColor(source) {
     loss: "#ED441A",
     net: "#20BD0F",
     estate: "#5286ec",
+    crowdestate: "#4983C3",
+    LHV1T: "#A1ABB2"
   }[source];
 }
