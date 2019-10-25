@@ -34,8 +34,8 @@ class App extends Component {
       passiveIncome: [],
       historicalPortfolioValues: [],
       passiveIncomeBreakdown: [],
-      availableCash: 0,
-      rentalIncome: 0
+      availableCash: null,
+      rentalIncome: null
     };
   }
 
@@ -76,27 +76,27 @@ class App extends Component {
 
     return (
       <ScoreCard
-        title={"Monthly passive income"}
+        title={"Monthly Passive Income"}
         value={formatCurrency(_.sumBy(this.state.passiveIncome, "net"))}
       />
     );
   }
 
   displayMonthlyRentalIncomeScorecard() {
-    if (!this.state.rentalIncome) {
+    if (this.state.rentalIncome === null) {
       return <Loader />;
     }
 
     return (
       <ScoreCard
-        title={"Monthly rental income"}
+        title={"Monthly Rental Income"}
         value={formatCurrency(this.state.rentalIncome)}
       />
     );
   }
 
   displayTotalMonthlyPassiveIncomeScorecard() {
-    if (!this.state.passiveIncome || !this.state.rentalIncome) {
+    if (this.state.passiveIncome === null || this.state.rentalIncome === null) {
       return <Loader />;
     }
 
@@ -124,7 +124,7 @@ class App extends Component {
   }
 
   displayPassiveIncomeBreakdown() {
-    if (!this.state.passiveIncome.length || !this.state.rentalIncome) {
+    if (!this.state.passiveIncome.length || this.state.rentalIncome === null) {
       return <Loader />;
     }
 
@@ -175,7 +175,14 @@ class App extends Component {
       <CombinedChart
         dataKey="month"
         barDataKey="total"
-        lineKeys={["mintos", "bondora", "funderbeam", "omaraha", "fundwise", "estate"]}
+        lineKeys={[
+          "mintos",
+          "bondora",
+          "funderbeam",
+          "omaraha",
+          "fundwise",
+          "estate"
+        ]}
         data={this.state.historicalPortfolioValues}
       />
     );
@@ -228,7 +235,9 @@ class App extends Component {
       }
     );
     this.fetch(
-      `/api/interests?type=daily_interests&start=${moment().format('YYYY-MM')}-01`,
+      `/api/interests?type=daily_interests&start=${moment().format(
+        "YYYY-MM"
+      )}-01`,
       "dailyInterestData"
     );
     this.fetch(
@@ -266,7 +275,7 @@ class App extends Component {
             {this.displayTotalMonthlyLossScorecard()}
           </Grid>
           <Grid item sm={4} md={2} xs={6}>
-            {!this.state.availableCash ? (
+            {this.state.availableCash === null ? (
               <Loader />
             ) : (
               <ScoreCard
@@ -283,13 +292,13 @@ class App extends Component {
           </Grid>
           <Grid item md={2} sm={6} xs={12}>
             <ChartCard
-              title={"Passive income breakdown"}
+              title={"Passive Income Breakdown"}
               content={this.displayPassiveIncomeBreakdown()}
             />
           </Grid>
           <Grid item md={8} xs={12}>
             <ChartCard
-              title="Daily interests"
+              title="Daily Passive Income"
               content={this.displayInterests(
                 "dailyInterestData",
                 "day",
@@ -300,10 +309,11 @@ class App extends Component {
           </Grid>
           <Grid item md={6} xs={12}>
             <ChartCard
-              title="Monthly Interests (2019)"
+              title="Monthly Passive Income (2019)"
               content={this.displayInterests("monthlyInterestData", "month", [
                 "mintos",
-                "omaraha"
+                "omaraha",
+                "crowdestate"
               ])}
             />
           </Grid>
