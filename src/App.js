@@ -35,7 +35,8 @@ class App extends Component {
       historicalPortfolioValues: [],
       passiveIncomeBreakdown: [],
       availableCash: null,
-      rentalIncome: null
+      rentalIncome: null,
+      settings: null
     };
   }
 
@@ -167,7 +168,10 @@ class App extends Component {
   }
 
   displayHistoricalPortfolioValues() {
-    if (!this.state.historicalPortfolioValues.length) {
+    if (
+      !this.state.historicalPortfolioValues.length ||
+      this.state.settings === null
+    ) {
       return <Loader />;
     }
 
@@ -175,14 +179,7 @@ class App extends Component {
       <CombinedChart
         dataKey="month"
         barDataKey="total"
-        lineKeys={[
-          "mintos",
-          "bondora",
-          "funderbeam",
-          "omaraha",
-          "fundwise",
-          "estate"
-        ]}
+        lineKeys={this.state.settings.components}
         data={this.state.historicalPortfolioValues}
       />
     );
@@ -222,6 +219,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.fetch("/api/settings", "settings");
     this.fetch("/api/portfolio-value", "portfolioValues");
     this.fetch("/api/rent?limit=3", "rentalIncome", data => {
       return _.sumBy(data, "net") / 3;
