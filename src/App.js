@@ -12,6 +12,7 @@ import ChartCard from './components/ChartCard';
 const moment = require('moment');
 
 const API_URL = process.env.REACT_APP_API_URL;
+const dailyPassiveIncomeStartDate = `${moment().format('YYYY-MM')}-01`;
 
 const styles = theme => ({
     root: {
@@ -29,8 +30,8 @@ class App extends Component {
 
         this.state = {
             portfolioValues: [],
-            dailyInterestData: [],
-            monthlyInterestData: [],
+            dailyPassiveIncomeData: [],
+            monthlyPassiveIncomeData: [],
             passiveIncome: [],
             historicalPortfolioValues: [],
             passiveIncomeBreakdown: [],
@@ -237,17 +238,15 @@ class App extends Component {
         });
         this.fetch('/api/passive-income', 'passiveIncome');
         this.fetch(
-            '/api/interests?type=monthly_interests&year=2019',
-            'monthlyInterestData',
+            '/api/interests?type=monthly_passive_income&year=2019',
+            'monthlyPassiveIncomeData',
             data => {
                 return this.groupBy(data, 'month', 'net');
             }
         );
         this.fetch(
-            `/api/interests?type=daily_interests&start=${moment().format(
-                'YYYY-MM'
-            )}-01`,
-            'dailyInterestData'
+            `/api/interests?type=daily_passive_income&start=${dailyPassiveIncomeStartDate}`,
+            'dailyPassiveIncomeData'
         );
         this.fetch(
             '/api/portfolio-value?type=by_month',
@@ -309,7 +308,7 @@ class App extends Component {
                         <ChartCard
                             title="Daily Passive Income"
                             content={this.displayInterests(
-                                'dailyInterestData',
+                                'dailyPassiveIncomeData',
                                 'day',
                                 ['loss', 'net'],
                                 true
@@ -321,7 +320,7 @@ class App extends Component {
                             <ChartCard
                                 title="Monthly Passive Income (2019)"
                                 content={this.displayInterests(
-                                    'monthlyInterestData',
+                                    'monthlyPassiveIncomeData',
                                     'month',
                                     this.state.settings.components
                                 )}
