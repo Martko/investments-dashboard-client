@@ -7,10 +7,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ScoreCard from './components/ScoreCard';
 import { formatCurrency } from './utils';
+import NavBar from './components/NavBar';
 import Loader from './components/Loader';
 import ChartCard from './components/ChartCard';
 const moment = require('moment');
-
 const API_URL = process.env.REACT_APP_API_URL;
 const dailyPassiveIncomeStartDate = `${moment().format('YYYY-MM')}-01`;
 
@@ -19,7 +19,7 @@ const styles = theme => ({
         flexGrow: 1,
     },
     paper: {
-        padding: theme.spacing.unit * 2,
+        padding: theme.spacing(2),
         color: theme.palette.text.secondary,
     },
 });
@@ -38,7 +38,17 @@ class App extends Component {
             availableCash: null,
             rentalIncome: null,
             settings: null,
+            year: new Date().getFullYear(),
         };
+    }
+
+    handleYearChange(event) {
+        this.setState({
+            ...this.state,
+            year: event.source.value,
+        });
+
+        this.fetchData();
     }
 
     groupBy(data, groupByField, valueField) {
@@ -230,15 +240,18 @@ class App extends Component {
             });
     }
 
-    componentDidMount() {
+    fetchData() {
         this.fetch('/api/settings', 'settings');
-        this.fetch('/api/portfolio-value', 'portfolioValues');
+        this.fetch(
+            '/api/portfolio-value?dateStart=2020-01-01&dateEnd=2020-12-31',
+            'portfolioValues'
+        );
         this.fetch('/api/rent?limit=3', 'rentalIncome', data => {
             return sumBy(data, 'net') / 3;
         });
         this.fetch('/api/passive-income', 'passiveIncome');
         this.fetch(
-            '/api/interests?type=monthly_passive_income&year=2019',
+            `/api/interests?type=monthly_passive_income&year=${this.state.year}`,
             'monthlyPassiveIncomeData',
             data => {
                 return this.groupBy(data, 'month', 'net');
@@ -249,7 +262,7 @@ class App extends Component {
             'dailyPassiveIncomeData'
         );
         this.fetch(
-            '/api/portfolio-value?type=by_month',
+            '/api/portfolio-value?type=by_month&dateStart=2020-01-01&dateEnd=2020-12-31',
             'historicalPortfolioValues',
             data => {
                 return this.groupBy(data, 'month', 'value');
@@ -263,10 +276,18 @@ class App extends Component {
         });
     }
 
+    componentDidMount() {
+        this.fetchData();
+    }
+
     render() {
         return (
             <div className="App">
-                <Grid container spacing={16}>
+                <NavBar
+                    yearChangeHandler={this.handleYearChange}
+                    year={this.state.year}
+                ></NavBar>
+                <Grid container className={this.props.classes.root} spacing={1}>
                     <Grid item sm={4} md={2} xs={6}>
                         {this.displayPortfolioValueScorecard()}
                     </Grid>
@@ -318,7 +339,7 @@ class App extends Component {
                     <Grid item md={6} xs={12}>
                         {this.state.settings !== null ? (
                             <ChartCard
-                                title="Monthly Passive Income (2019)"
+                                title="Monthly Passive Income"
                                 content={this.displayInterests(
                                     'monthlyPassiveIncomeData',
                                     'month',
@@ -329,7 +350,7 @@ class App extends Component {
                     </Grid>
                     <Grid item md={6} xs={12}>
                         <ChartCard
-                            title="Portfolio value change (2019)"
+                            title="Portfolio value change"
                             content={this.displayHistoricalPortfolioValues()}
                         />
                     </Grid>
