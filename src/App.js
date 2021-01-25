@@ -243,7 +243,7 @@ class App extends Component {
     fetchData() {
         this.fetch('/api/settings', 'settings');
         this.fetch(
-            '/api/portfolio-value?dateStart=2020-01-01&dateEnd=2020-12-31',
+            '/api/portfolio-value?dateStart=2021-01-01&dateEnd=2021-12-31',
             'portfolioValues'
         );
         this.fetch('/api/rent?limit=3', 'rentalIncome', data => {
@@ -262,7 +262,7 @@ class App extends Component {
             'dailyPassiveIncomeData'
         );
         this.fetch(
-            '/api/portfolio-value?type=by_month&dateStart=2020-01-01&dateEnd=2020-12-31',
+            '/api/portfolio-value?type=by_month&dateStart=2021-01-01&dateEnd=2021-12-31',
             'historicalPortfolioValues',
             data => {
                 return this.groupBy(data, 'month', 'value');
