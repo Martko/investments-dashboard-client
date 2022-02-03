@@ -14,7 +14,7 @@ const moment = require('moment');
 const API_URL = process.env.REACT_APP_API_URL;
 const dailyPassiveIncomeStartDate = `${moment().format('YYYY-MM')}-01`;
 
-const styles = theme => ({
+const styles = (theme) => ({
     root: {
         flexGrow: 1,
     },
@@ -53,7 +53,7 @@ class App extends Component {
 
     groupBy(data, groupByField, valueField) {
         let res = {};
-        data.forEach(entry => {
+        data.forEach((entry) => {
             const key = entry[groupByField] - 1;
 
             if (!res.hasOwnProperty(key)) {
@@ -222,8 +222,8 @@ class App extends Component {
 
     async fetch(url, stateProperty, transformerFunction) {
         fetch(API_URL + url)
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
                 const state = {
                     ...this.state,
                 };
@@ -235,7 +235,7 @@ class App extends Component {
                 state[stateProperty] = data;
                 this.setState(state);
             })
-            .catch(err => {
+            .catch((err) => {
                 throw new Error(err);
             });
     }
@@ -243,17 +243,17 @@ class App extends Component {
     fetchData() {
         this.fetch('/api/settings', 'settings');
         this.fetch(
-            '/api/portfolio-value?dateStart=2021-01-01&dateEnd=2021-12-31',
+            '/api/portfolio-value?dateStart=2022-01-01&dateEnd=2022-12-31',
             'portfolioValues'
         );
-        this.fetch('/api/rent?limit=3', 'rentalIncome', data => {
+        this.fetch('/api/rent?limit=3', 'rentalIncome', (data) => {
             return sumBy(data, 'net') / 3;
         });
         this.fetch('/api/passive-income', 'passiveIncome');
         this.fetch(
             `/api/interests?type=monthly_passive_income&year=${this.state.year}`,
             'monthlyPassiveIncomeData',
-            data => {
+            (data) => {
                 return this.groupBy(data, 'month', 'net');
             }
         );
@@ -262,16 +262,16 @@ class App extends Component {
             'dailyPassiveIncomeData'
         );
         this.fetch(
-            '/api/portfolio-value?type=by_month&dateStart=2021-01-01&dateEnd=2021-12-31',
+            '/api/portfolio-value?type=by_month&dateStart=2022-01-01&dateEnd=2022-12-31',
             'historicalPortfolioValues',
-            data => {
+            (data) => {
                 return this.groupBy(data, 'month', 'value');
             }
         );
-        this.fetch('/api/cash', 'availableCash', data => {
+        this.fetch('/api/cash', 'availableCash', (data) => {
             return sumBy(data, 'cash');
         });
-        this.fetch('/api/loans', 'loans', data => {
+        this.fetch('/api/loans', 'loans', (data) => {
             return this.groupBy(data, 'month', 'sum');
         });
     }
